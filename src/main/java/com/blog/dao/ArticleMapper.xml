@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.dao.ArticleMapper">
+
+	<!-- <resultMap type="com.blog.model.Article" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+		<result column="author_id" property="author" javaType="com.blog.model.User" select="getUser" />
+		<result column="posttime" property="postTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+ -->
+	<sql id="Base_Colum_List">
+		id, title, content, author_id, posttime
+	</sql>
+
+	<sql id="User_Colum_List">
+		id, username, sex, password, password_salt, email, registertime, lastlogintime
+	</sql>
+	
+	<sql id="Reply_Colum_List">
+		id, author_id, replyTime, article_id, content
+	</sql>
+
+	<!-- 发表文章 -->
+	<insert id="save" parameterType="com.blog.model.Article">
+		insert into article(title, content, author_id, posttime)
+		values(#{title}, #{content}, #{author_id}, #{posttime} )
+	</insert>
+
+	<!-- 根据id删除文章,删除时,文章的回复也一起删除 -->
+	<delete id="delete" parameterType="java.lang.Long">
+		delete from article where id=#{id}
+	</delete>
+
+	<!-- update -->
+	<update id="update" parameterType="com.blog.model.Article">
+		update article set
+		title=#{title}, content=#{content},
+		posttime=#{postTime}
+		where id=#{id}
+	</update>
+
+	<!-- get by id, Article与User的多对一, 与Reply的一对多 -->
+	<select id="getById" resultMap="ArticleResultMap" parameterType="java.lang.Long">
+		select
+		<include refid="Base_Colum_List" />
+		from article
+		where id=#{id}
+	</select>
+	<resultMap type="com.blog.model.Article" id="ArticleResultMap">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="content" property="content" jdbcType="LONGVARCHAR" />
+		<result column="posttime" property="postTime" jdbcType="TIMESTAMP" />
+		<association property="author" column="author_id" javaType="com.blog.model.User" select="getUser" />
+		<collection property="replies" ofType="com.blog.model.Reply" column="id" select="getReplies" />
+	</resultMap>
+	<select id="getUser" parameterType="java.lang.Long" resultType="com.blog.model.User">
+		select
+		<include refid="User_Colum_List" />
+		from users
+		where id=#{author_id}
+	</select>
+	<select id="getReplies" parameterType="java.lang.Long" resultType="com.blog.model.Reply">
+		select
+		<include refid="Reply_Colum_List" />
+		from reply
+		where id=#{id}
+	</select>
+
+	<!-- find all -->
+	<select id="getAll" resultType="com.blog.model.Article">
+		select
+		<include refid="Base_Colum_List" />
+		from article
+	</select>
+</mapper>
