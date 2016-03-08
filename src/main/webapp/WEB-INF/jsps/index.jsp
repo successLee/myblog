@@ -7,5 +7,7 @@
 	<h1>hello blog</h1>
 	<a href="${pageContext.request.contextPath }/user/toReg.do">用户注册</a><br>
 	<a href="${pageContext.request.contextPath }/user/toLogin.do">登录</a><br>
+	<br><br><br>
+	<img alt="" src="${pageContext.request.contextPath }/${user.iconpath}" width="50px">
 </body>
 </html>

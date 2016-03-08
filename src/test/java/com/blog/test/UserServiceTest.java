@@ -53,7 +53,7 @@ public class UserServiceTest {
 	@Test
 	public void updateTest() {
 		statement = "com.blog.dao.UserMapper.update";
-		User user = new User("testUpdate", "female", "789012", "salt1", "131810@b.com", null, null);
+		User user = new User("test11111e", "", "", "", "", null, null);
 		user.setId(Long.valueOf(2));
 		session.update(statement, user);
 	}

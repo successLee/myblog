@@ -35,11 +35,13 @@ public class User {
 
 	private Date lastloginTime;
 
+	/*用户头像路径*/
+	private String iconpath;
+
 	public User() {
 	}
 
 	public User(String username, String sex, String password, String password_salt, String email, Date registerTime, Date lastloginTime) {
-		super();
 		this.username = username;
 		this.sex = sex;
 		this.password = password;
@@ -111,6 +113,14 @@ public class User {
 
 	public void setLastloginTime(Date lastloginTime) {
 		this.lastloginTime = lastloginTime;
+	}
+
+	public String getIconpath() {
+		return iconpath;
+	}
+
+	public void setIconpath(String iconpath) {
+		this.iconpath = iconpath;
 	}
 
 	@Override

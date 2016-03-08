@@ -11,18 +11,19 @@
 		<result column="email" property="email" jdbcType="VARCHAR" />
 		<result column="registertime" property="registerTime" jdbcType="TIMESTAMP" />
 		<result column="lastlogintime" property="lastloginTime" jdbcType="TIMESTAMP" />
+		<result column="iconpath" property="iconpath" jdbcType="VARCHAR"/>
 	</resultMap>
 
 	<sql id="Base_Colum_list">
-		id, username, sex, password, password_salt, email, registertime, lastlogintime
+		id, username, sex, password, password_salt, email, registertime, lastlogintime, iconpath
 	</sql>
 
 	<!-- 添加用户 -->
 	<insert id="save" parameterType="com.blog.model.User">
 		insert into users(username, sex, password, password_salt,
-		email, registertime, lastlogintime)
+		email, registertime, lastlogintime, iconpath)
 		values(#{username}, #{sex}, #{password},
-		#{password_salt}, #{email}, #{registerTime}, #{lastloginTime} )
+		#{password_salt}, #{email}, #{registerTime}, #{lastloginTime}, #{iconpath} )
 	</insert>
 
 	<!-- 根据id删除用户 -->
@@ -51,7 +52,10 @@
 					email=#{email, jdbcType=VARCHAR},
 				</if>
 				<if test="lastloginTime != null">
-					lastlogintime=#{lastloginTime, jdbcType=TIMESTAMP}
+					lastlogintime=#{lastloginTime, jdbcType=TIMESTAMP},
+				</if>
+				<if test="iconpath != null and iconpath != '' ">
+					iconpath=#{iconpath, jdbcType=VARCHAR}
 				</if>
 			</trim>
 		</set>

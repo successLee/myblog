@@ -13,6 +13,7 @@ CREATE TABLE users (
 	`email` varchar(50) DEFAULT NULL COMMENT '邮箱',
 	`registertime` datetime DEFAULT NULL COMMENT '注册时间',
 	`lastlogintime` datetime DEFAULT NULL COMMENT '上次登录时间',
+	`iconpath` varchar(64) DEFAULT NULL COMMENT '用户头像',
 	PRIMARY KEY(`id`)
 )ENGINE=InnoDB charset=utf8 COMMENT='用户表';
 

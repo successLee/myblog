@@ -1,5 +1,7 @@
 package com.blog.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blog.core.util.LoginUtil;
 import com.blog.model.User;
@@ -50,7 +53,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "reg", method = RequestMethod.POST)
-	public String submitRegistForm(@RequestParam String password2, @Valid User user, BindingResult result, ModelMap map) {
+	public String submitRegistForm(@RequestParam MultipartFile usericon, @RequestParam String password2, @Valid User user, BindingResult result, ModelMap map) {
 		if (result.hasErrors()) {
 			List<FieldError> fieldErrors = result.getFieldErrors();
 			for (FieldError error : fieldErrors) {
@@ -64,6 +67,34 @@ public class UserController {
 			return showRegisterForm();
 		}
 
+		//上传用户头像
+		if (usericon != null) {
+			String uploadUrl = request.getSession().getServletContext().getRealPath("/") + "/upload/";
+			String fileName = usericon.getOriginalFilename();
+
+			File uploadDir = new File(uploadUrl);
+			if (!uploadDir.exists()) {
+				uploadDir.mkdirs();
+			}
+
+			File targetFile = new File(uploadDir + "/" + fileName);
+			if (!targetFile.exists()) {
+				try {
+					targetFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+					return showRegisterForm();
+				}
+			}
+			try {
+				usericon.transferTo(targetFile);
+			} catch (IllegalStateException | IOException e) {
+				e.printStackTrace();
+				return showRegisterForm();
+			}
+			user.setIconpath("/upload/" + fileName);
+		}
+		
 		Date registerTime = new Date();
 		user.setRegisterTime(registerTime);
 		user.setPassword(LoginUtil.encryptPassword(password2, registerTime));
@@ -71,6 +102,7 @@ public class UserController {
 		try {
 			userService.save(user);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return showRegisterForm();
 		}
 
@@ -109,6 +141,10 @@ public class UserController {
 				request.setAttribute("ERR_user", "用户名密码错误");
 				return showLoginForm();
 			}
+
+			loginUser.setLastloginTime(new Date());
+			userService.update(loginUser);
+
 			logger.info("UserController--------:" + loginUser);
 			request.getSession().setAttribute("user", loginUser);
 			return "redirect:/index.do";
